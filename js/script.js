@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('seconds').innerText = textSecond;
 
         // Calcular el progreso de la cuenta atrás
-        const startDate = new Date("January 1, 2024 00:00:00").getTime(); // Fecha de inicio aproximada
+        const startDate = new Date("April 1, 2025 00:00:00").getTime(); // Fecha de inicio aproximada
         const totalDuration = countDate - startDate;
         const elapsed = now - startDate;
         let progress = (elapsed / totalDuration) * 100;
