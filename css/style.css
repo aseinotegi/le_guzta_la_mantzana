@@ -116,3 +116,10 @@ h1 {
     z-index: -1;
     animation: fadeIn 1.5s 1s forwards;
 }
+
+.bixkor-text {
+    font-size: 0.8em;
+    margin-top: 10px;
+    position: relative;
+    z-index: 1;
+}
