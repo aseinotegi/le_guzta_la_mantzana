@@ -1,50 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    const countdownDate = new Date('April 1, 2026 00:00:00').getTime();
-    const startDate = new Date().getTime();
-    const totalDuration = countdownDate - startDate;
-
-    const daysEl = document.getElementById('days');
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-    const boarEl = document.getElementById('boar');
-    const progressBar = document.getElementById('progress-bar');
-    const faceImage = document.getElementById('face-image');
-
-    const updateCountdown = () => {
+    // Temporizador (código existente si lo hubiera)
+    const countdown = () => {
+        const countDate = new Date("April 1, 2026 00:00:00").getTime();
         const now = new Date().getTime();
-        const distance = countdownDate - now;
+        const gap = countDate - now;
 
-        if (distance < 0) {
-            clearInterval(interval);
-            document.getElementById('countdown').innerHTML = "<h2>¡Por fin te has ido!</h2>";
-            boarEl.style.left = `calc(100% - 50px)`;
-            faceImage.src = 'img/cara_triste.png';
-            return;
-        }
+        const second = 1000;
+        const minute = second * 60;
+        const hour = minute * 60;
+        const day = hour * 24;
 
-        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        const textDay = Math.floor(gap / day);
+        const textHour = Math.floor((gap % day) / hour);
+        const textMinute = Math.floor((gap % hour) / minute);
+        const textSecond = Math.floor((gap % minute) / second);
 
-        daysEl.innerText = days;
-        hoursEl.innerText = hours;
-        minutesEl.innerText = minutes;
-        secondsEl.innerText = seconds;
+        document.getElementById('days').innerText = textDay;
+        document.getElementById('hours').innerText = textHour;
+        document.getElementById('minutes').innerText = textMinute;
+        document.getElementById('seconds').innerText = textSecond;
 
-        const elapsedTime = now - startDate;
-        const progressPercentage = (elapsedTime / totalDuration) * 100;
+        // Calcular el progreso de la cuenta atrás
+        const startDate = new Date("January 1, 2024 00:00:00").getTime(); // Fecha de inicio aproximada
+        const totalDuration = countDate - startDate;
+        const elapsed = now - startDate;
+        let progress = (elapsed / totalDuration) * 100;
+        progress = Math.min(100, Math.max(0, progress));
         
-        boarEl.style.left = `calc(${progressPercentage}% - ${progressPercentage > 0 ? (50 * (progressPercentage/100)): 0}px)`;
-
-        // Change face image based on progress
-        if (progressPercentage > 50 && faceImage.src.includes('cara_feliz.png')) {
-            faceImage.src = 'img/cara_triste.png';
+        // Actualizar la barra de progreso
+        const progressFill = document.getElementById('progress-fill');
+        if (progressFill) {
+            progressFill.style.width = `${progress}%`;
         }
+
     };
 
-    const interval = setInterval(updateCountdown, 1000);
-    updateCountdown();
+    setInterval(countdown, 1000);
+    countdown(); // Llama una vez para que no haya retraso
+
+    // Lógica para el scroll fade-in
+    const scrollObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, {
+        threshold: 0.1 // El elemento se considera visible cuando el 10% está en pantalla
+    });
+
+    const messageBoxes = document.querySelectorAll('.message-box');
+    messageBoxes.forEach(box => scrollObserver.observe(box));
 });
