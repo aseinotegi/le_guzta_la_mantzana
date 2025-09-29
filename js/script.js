@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
         "Próximamente",
         "Se viene",
         "Desocupando",
-        "Cargando",
         "Jejeje"
     ];
 
