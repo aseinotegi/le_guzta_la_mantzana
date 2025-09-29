@@ -300,7 +300,7 @@ h1 {
 
 .progress-container {
     width: 100%;
-    max-width: 600px;
+    max-width: 1000px;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -353,8 +353,8 @@ h1 {
 }
 
 .progress-face {
-    width: 50px;
-    height: 50px;
+    width:150px;
+    height: 150px;
     border-radius: 50%;
     transition: all 0.3s ease-in-out;
     filter: drop-shadow(0 0 15px rgba(139, 0, 0, 0.6));
