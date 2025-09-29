@@ -321,22 +321,31 @@ h1 {
         0 0 25px rgba(139, 0, 0, 0.4);
 }
 
+
+/* REEMPLAZAR EL .progress-fill ANTIGUO POR ESTE */
 .progress-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, 
-        #4ade80 0%,
-        #fbbf24 25%, 
-        #f97316 50%, 
-        #ef4444 75%, 
-        #7f1d1d 100%);
+    background: linear-gradient(90deg, #ef4444 0%, #b91c1c 50%, #7f1d1d 100%);
     border-radius: 8px;
-    position: relative;
-    transition: width 1s ease-out;
     box-shadow: 
-        0 0 20px rgba(139, 0, 0, 0.6),
+        0 0 20px rgba(255, 0, 0, 0.7),
         inset 0 2px 0 rgba(255, 255, 255, 0.2);
-    animation: progressPulse 2s ease-in-out infinite;
+    position: relative; /* Muy importante para el efecto */
+    overflow: hidden; /* Esconde el brillo cuando se sale de la barra */
+    transition: width 1s ease-out;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.25) 50%, transparent 100%);
+    transform: skewX(-25deg); /* Inclina el brillo */
+    animation: sheen 2.5s linear infinite;
 }
 
 @keyframes progressPulse {
@@ -745,4 +754,65 @@ h1 {
     .message-box h2 {
         font-size: clamp(0.9rem, 4vw, 1.2rem);
     }
+}
+
+.progress-bar {
+    flex: 1;
+    height: 30px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid rgba(139, 0, 0, 0.6);
+    border-radius: 10px;
+    position: relative; /* Necesario para posicionar el icono de forma absoluta */
+    overflow: hidden;
+    box-shadow: 
+        inset 0 3px 10px rgba(0, 0, 0, 0.8),
+        0 0 25px rgba(139, 0, 0, 0.4);
+}
+
+.progress-icon {
+    position: absolute;
+    top: 50%;
+    left: 0; /* Se actualizará con JavaScript */
+    transform: translateY(-50%);
+    width: 24px; /* Ancho del icono */
+    height: 24px; /* Alto del icono */
+    transition: left 1s ease-out;
+    z-index: 2; /* Para que esté por encima de la barra de progreso */
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+    
+    /* --- NUEVAS LÍNEAS --- */
+    background-color: rgba(255, 50, 50, 0.4); /* Fondo rojo semitransparente */
+    border-radius: 50%; /* Para hacerlo circular */
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.7); /* Un brillo exterior */
+    padding: 2px; /* Un pequeño espacio entre el icono y el borde del círculo */
+    box-sizing: content-box; /* Para que el padding no afecte al tamaño total */
+}
+
+/* AÑADIR ESTO AL FINAL DEL ARCHIVO */
+@keyframes sheen {
+    0% {
+        left: -75%;
+    }
+    100% {
+        left: 125%;
+    }
+}
+
+.progress-text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    font-family: 'Courier New', Courier, monospace; /* Fuente estilo retro */
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    pointer-events: none; /* Evita que el texto interfiera con el ratón */
 }

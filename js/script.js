@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Temporizador (código existente si lo hubiera)
     const countdown = () => {
         const countDate = new Date("April 1, 2026 00:00:00").getTime();
         const now = new Date().getTime();
@@ -21,25 +20,26 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('minutes').innerText = textMinute;
         document.getElementById('seconds').innerText = textSecond;
 
-        // Calcular el progreso de la cuenta atrás
-        const startDate = new Date("April 1, 2025 00:00:00").getTime(); // Fecha de inicio aproximada
+        const startDate = new Date("April 1, 2025 00:00:00").getTime();
         const totalDuration = countDate - startDate;
         const elapsed = now - startDate;
         let progress = (elapsed / totalDuration) * 100;
         progress = Math.min(100, Math.max(0, progress));
         
-        // Actualizar la barra de progreso
         const progressFill = document.getElementById('progress-fill');
-        if (progressFill) {
-            progressFill.style.width = `${progress}%`;
-        }
+        const progressIcon = document.getElementById('progress-icon');
+        const progressPercentage = document.getElementById('progress-percentage'); // Obtener el icono
 
+        if (progressFill && progressIcon && progressPercentage) { // Asegurarse de que existe
+            progressFill.style.width = `${progress}%`;
+            progressIcon.style.left = `calc(${progress}% - 12px)`;
+            progressPercentage.innerText = `${Math.round(progress)}%`; // Actualizar el texto del porcentaje
+        }
     };
 
     setInterval(countdown, 1000);
-    countdown(); // Llama una vez para que no haya retraso
+    countdown();
 
-    // Lógica para el scroll fade-in
     const scrollObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
             if (entry.isIntersecting) {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }, {
-        threshold: 0.1 // El elemento se considera visible cuando el 10% está en pantalla
+        threshold: 0.1
     });
 
     const messageBoxes = document.querySelectorAll('.message-box');
