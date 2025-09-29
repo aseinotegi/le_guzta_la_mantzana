@@ -1,5 +1,28 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    const phrases = [
+        "Abril",
+        "Próximamente",
+        "Se viene",
+        "Desocupando",
+        "Cargando",
+        "Jejeje"
+    ];
+
+    const loadingText = document.getElementById('loading-text');
+
+    const changeLoadingText = () => {
+        const randomIndex = Math.floor(Math.random() * phrases.length);
+        if (loadingText) {
+            loadingText.innerText = phrases[randomIndex];
+        }
+    };
+
+    // Cambia el texto cada 2 segundos
+    setInterval(changeLoadingText, 1500);
+    // Llama a la función una vez al inicio para que no se quede el texto estático
+    changeLoadingText();
+
     const countdown = () => {
         const countDate = new Date("April 1, 2026 00:00:00").getTime();
         const now = new Date().getTime();
