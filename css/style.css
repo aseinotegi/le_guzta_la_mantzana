@@ -134,7 +134,7 @@ body::after {
         filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8));
     }
 }
-}
+
 
 h1 {
     font-size: clamp(2rem, 5vw, 3.5rem);
