@@ -7,12 +7,15 @@
 body {
     font-family: 'Creepster', 'Nosifer', 'Butcherman', serif;
     color: #ff4444;
-    background: url('../img/background.png') no-repeat center center/cover;
-    background-attachment: fixed;
+    background: url('../img/background.png') no-repeat center top;
+    background-size: cover;
+    background-position: center 0;
+    background-color: #000;
     text-align: center;
     position: relative;
     overflow-x: hidden;
     text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+    min-height: 100vh;
 }
 
 body::before {
@@ -41,14 +44,14 @@ body::after {
 }
 
 .container {
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(3px);
     border: 2px solid rgba(139, 0, 0, 0.5);
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 
+    box-shadow:
         0 0 50px rgba(139, 0, 0, 0.6),
-        inset 0 0 20px rgba(0, 0, 0, 0.8),
+        inset 0 0 20px rgba(0, 0, 0, 0.5),
         0 0 100px rgba(255, 0, 0, 0.2);
     animation: fadeIn 1.5s ease-out forwards, containerFlicker 10s ease-in-out infinite;
     min-height: auto;
@@ -543,6 +546,8 @@ h1 {
 @media (max-width: 768px) {
     body {
         padding: 0;
+        background-size: contain;
+        background-position: center top;
     }
     
     .container {
@@ -622,6 +627,11 @@ h1 {
 }
 
 @media (max-width: 480px) {
+    body {
+        background-size: contain;
+        background-position: center top;
+    }
+
     .container {
         padding: 1rem 0.8rem;
         margin: 0.25rem;
