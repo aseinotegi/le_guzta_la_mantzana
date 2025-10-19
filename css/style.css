@@ -7,9 +7,10 @@
 body {
     font-family: 'Creepster', 'Nosifer', 'Butcherman', serif;
     color: #ff4444;
-    background: url('../img/background.png') no-repeat center top;
-    background-size: cover;
-    background-position: center 0;
+    background: url('../img/background.png') no-repeat center center;
+    background-size: contain;
+    background-position: center center;
+    background-attachment: fixed;
     background-color: #000;
     text-align: center;
     position: relative;
