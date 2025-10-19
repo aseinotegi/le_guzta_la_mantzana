@@ -4,13 +4,24 @@
     box-sizing: border-box;
 }
 
+/* Video de fondo */
+.video-background {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    z-index: -3;
+    object-fit: cover;
+    background-color: #000;
+}
+
 body {
     font-family: 'Creepster', 'Nosifer', 'Butcherman', serif;
     color: #ff4444;
-    background: url('../img/background.png') no-repeat center center;
-    background-size: contain;
-    background-position: center center;
-    background-attachment: fixed;
     background-color: #000;
     text-align: center;
     position: relative;
