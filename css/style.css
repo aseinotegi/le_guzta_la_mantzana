@@ -547,8 +547,9 @@ h1 {
 @media (max-width: 768px) {
     body {
         padding: 0;
-        background-size: contain;
-        background-position: center top;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll;
     }
     
     .container {
@@ -629,8 +630,9 @@ h1 {
 
 @media (max-width: 480px) {
     body {
-        background-size: contain;
-        background-position: center top;
+        background-size: cover;
+        background-position: center center;
+        background-attachment: scroll;
     }
 
     .container {
