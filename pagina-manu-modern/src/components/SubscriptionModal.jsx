@@ -58,7 +58,9 @@ export function SubscriptionModal({ open, onOpenChange }) {
       }
 
       if (!response.ok) {
-        throw new Error(result.error || 'Error al suscribirse')
+        // Prefer 'details' for technical errors, then 'message', then generic 'error'
+        const errorMessage = result.details || result.message || result.error || 'Error al suscribirse'
+        throw new Error(errorMessage)
       }
 
       addToast('¡Suscripción exitosa! Revisa tu email de confirmación.', 'success')
