@@ -47,7 +47,15 @@ export function SubscriptionModal({ open, onOpenChange }) {
         body: JSON.stringify(data),
       })
 
-      const result = await response.json()
+      const text = await response.text()
+      let result
+      
+      try {
+        result = JSON.parse(text)
+      } catch (e) {
+        console.error('La respuesta del servidor no es un JSON válido:', text)
+        throw new Error('Error técnico: El servidor devolvió una respuesta inválida. Revisa la consola para más detalles.')
+      }
 
       if (!response.ok) {
         throw new Error(result.error || 'Error al suscribirse')

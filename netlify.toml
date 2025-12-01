@@ -1,7 +1,13 @@
 [build]
-  base = "pagina-manu-modern"
-  publish = "dist"
-  command = "npm run build"
+  # Usamos la raíz del proyecto como base para que Netlify instale las dependencias de las funciones (nodemailer, etc.)
+  # No definimos 'base' para que sea por defecto la raíz '.'
+  
+  # Publicamos la carpeta dist generada por Vite dentro del subdirectorio
+  publish = "pagina-manu-modern/dist"
+  
+  # Comando para construir: entramos al subdirectorio, instalamos dependencias de React y construimos
+  # Nota: Netlify instalará automáticamente las dependencias del package.json raíz antes de esto
+  command = "cd pagina-manu-modern && npm install && npm run build"
 
 [functions]
   directory = "netlify/functions"
