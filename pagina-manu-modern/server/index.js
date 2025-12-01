@@ -149,6 +149,95 @@ async function sendWelcomeEmail(name, email) {
   }
 }
 
+// Función para enviar Newsletter
+async function sendNewsletterEmail(email, subject, contentHTML) {
+  // Validar configuración
+  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+    throw new Error('Credenciales SMTP no configuradas')
+  }
+
+  const baseHTML = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          body { font-family: Arial, sans-serif; background-color: #000; color: #ddd; margin: 0; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: #111; border: 1px solid #333; border-radius: 8px; padding: 30px; }
+          h1 { color: #ff4444; text-align: center; margin-bottom: 30px; }
+          .content { line-height: 1.6; color: #ccc; }
+          .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #333; text-align: center; font-size: 12px; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          ${contentHTML}
+          <div class="footer">
+            <p>Recibes esto porque te suscribiste a Adios Manuel.</p>
+            <p>Para darte de baja, responde a este correo.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"${process.env.SMTP_FROM_NAME || 'Adios Manuel'}" <${process.env.SMTP_FROM_EMAIL}>`,
+      to: email,
+      subject: subject,
+      html: baseHTML,
+    });
+    return { success: true, id: info.messageId };
+  } catch (error) {
+    console.error(`❌ Error enviando newsletter a ${email}:`, error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Endpoint para envío masivo (PROTEGIDO)
+app.post('/api/admin/broadcast', async (req, res) => {
+  const adminKey = req.headers['x-admin-key']
+  
+  // Verificar seguridad
+  if (!process.env.ADMIN_KEY || adminKey !== process.env.ADMIN_KEY) {
+    return res.status(403).json({ error: 'Acceso denegado. Clave incorrecta.' })
+  }
+
+  const { subject, htmlContent } = req.body
+
+  if (!subject || !htmlContent) {
+    return res.status(400).json({ error: 'Faltan datos: subject y htmlContent son requeridos' })
+  }
+
+  try {
+    const subscribers = subscriberDB.getAll()
+    console.log(`📢 Iniciando broadcast a ${subscribers.length} suscriptores...`)
+
+    let successCount = 0
+    let failCount = 0
+
+    // Enviar uno a uno
+    for (const sub of subscribers) {
+      const result = await sendNewsletterEmail(sub.email, subject, htmlContent)
+      if (result.success) successCount++
+      else failCount++
+    }
+
+    res.json({
+      message: 'Broadcast completado',
+      stats: {
+        total: subscribers.length,
+        sent: successCount,
+        failed: failCount
+      }
+    })
+
+  } catch (error) {
+    console.error('❌ Error en broadcast:', error)
+    res.status(500).json({ error: 'Error interno del servidor durante el broadcast' })
+  }
+})
+
 // Endpoint para suscripción
 app.post('/api/subscribe', async (req, res) => {
   const { name, email } = req.body
