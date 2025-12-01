@@ -33,3 +33,4 @@ server/subscribers.db
 server/subscribers.db-journal
 *.db
 *.db-journal
+.claude
