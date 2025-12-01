@@ -1,0 +1,16 @@
+{
+  "name": "pagina_manu",
+  "version": "1.0.0",
+  "description": "Proyecto migrado de HTML/CSS/JS puro a **React + Vite + Tailwind CSS** con componentes modernos y animaciones profesionales.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "nodemailer": "^7.0.11"
+  }
+}

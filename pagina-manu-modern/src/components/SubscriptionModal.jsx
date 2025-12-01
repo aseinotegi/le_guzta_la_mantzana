@@ -37,7 +37,8 @@ export function SubscriptionModal({ open, onOpenChange }) {
     setIsSubmitting(true)
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001'
+      // Use relative path for Netlify Functions (redirects handle /api -> /.netlify/functions)
+      const apiUrl = import.meta.env.VITE_API_URL || ''
       const response = await fetch(`${apiUrl}/api/subscribe`, {
         method: 'POST',
         headers: {
