@@ -52,10 +52,7 @@ exports.handler = async (event, context) => {
     console.log('✅ Autenticación exitosa');
 
     // Obtener lista de suscriptores
-    const store = getStore({
-      name: 'subscribers',
-      context,
-    });
+    const store = getStore('subscribers');
     const subscribers = await store.get('list', { type: 'json' }) || [];
 
     console.log(`📊 Retornando ${subscribers.length} suscriptores`);
