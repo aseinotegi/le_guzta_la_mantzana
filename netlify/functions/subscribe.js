@@ -1,24 +1,49 @@
 const nodemailer = require('nodemailer');
-require('dotenv').config();
 
-// Configurar transporter de Nodemailer (SMTP)
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "mail.smtp2go.com",
-  port: Number(process.env.SMTP_PORT) || 2525,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+// En Netlify, las variables de entorno ya están disponibles automáticamente
+// Solo cargamos dotenv si estamos en desarrollo local
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 async function sendWelcomeEmail(name, email) {
-  // Validar configuración
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    throw new Error('Credenciales SMTP (Usuario/Contraseña) no configuradas');
+  // Validar que todas las variables de entorno necesarias estén configuradas
+  const requiredEnvVars = {
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    SMTP_USER: process.env.SMTP_USER,
+    SMTP_PASS: process.env.SMTP_PASS,
+    SMTP_FROM_EMAIL: process.env.SMTP_FROM_EMAIL,
+    SMTP_FROM_NAME: process.env.SMTP_FROM_NAME,
+  };
+
+  const missingVars = Object.entries(requiredEnvVars)
+    .filter(([key, value]) => !value)
+    .map(([key]) => key);
+
+  if (missingVars.length > 0) {
+    console.error('❌ Variables de entorno faltantes:', missingVars);
+    throw new Error(`Credenciales SMTP no configuradas. Faltan: ${missingVars.join(', ')}`);
   }
 
+  console.log('📧 Configuración SMTP detectada:');
+  console.log('- Host:', process.env.SMTP_HOST);
+  console.log('- Port:', process.env.SMTP_PORT);
+  console.log('- User:', process.env.SMTP_USER ? '✓ Configurado' : '✗ No configurado');
+  console.log('- Pass:', process.env.SMTP_PASS ? '✓ Configurado' : '✗ No configurado');
+  console.log('- From:', process.env.SMTP_FROM_EMAIL);
   console.log('📧 Intentando enviar email a:', email);
+
+  // Configurar transporter de Nodemailer (SMTP)
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
 
   const emailHTML = `
     <!DOCTYPE html>
@@ -121,8 +146,11 @@ async function sendWelcomeEmail(name, email) {
   `;
 
   try {
+    const fromAddress = `"${process.env.SMTP_FROM_NAME}" <${process.env.SMTP_FROM_EMAIL}>`;
+    console.log('📤 Enviando desde:', fromAddress);
+
     const info = await transporter.sendMail({
-      from: `"${process.env.SMTP_FROM_NAME || 'Adios Manuel'}" <${process.env.SMTP_FROM_EMAIL}>`,
+      from: fromAddress,
       to: email,
       subject: "🎉 ¡Bienvenido! Tu suscripción está confirmada",
       html: emailHTML,
@@ -132,25 +160,37 @@ async function sendWelcomeEmail(name, email) {
     return info;
   } catch (error) {
     console.error("❌ Error enviando email (Nodemailer):", error);
+    console.error("❌ Detalles del error:", {
+      message: error.message,
+      code: error.code,
+      response: error.response,
+    });
     throw error;
   }
 }
 
 exports.handler = async (event, context) => {
+  console.log('🚀 Función subscribe iniciada');
+  console.log('🌍 Entorno:', process.env.NODE_ENV || 'no definido');
+
   // Only allow POST
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
   try {
     const { name, email } = JSON.parse(event.body);
+    console.log('📥 Datos recibidos:', { name, email });
 
     if (!name || !email) {
+      console.warn('⚠️ Datos incompletos');
       return {
         statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ error: "Nombre y email son requeridos" }),
       };
     }
@@ -161,8 +201,10 @@ exports.handler = async (event, context) => {
 
     await sendWelcomeEmail(name, email);
 
+    console.log('✅ Suscripción completada exitosamente');
     return {
       statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: true,
         message: "¡Suscripción exitosa! Revisa tu email de bienvenida.",
@@ -170,8 +212,11 @@ exports.handler = async (event, context) => {
     };
   } catch (error) {
     console.error("❌ Error al procesar suscripción:", error);
+    console.error("❌ Stack trace:", error.stack);
+
     return {
       statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         error: "Error al procesar la suscripción",
         details: error.message,
