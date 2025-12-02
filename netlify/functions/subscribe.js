@@ -1,9 +1,47 @@
 const nodemailer = require('nodemailer');
+const { getStore } = require('@netlify/blobs');
 
 // En Netlify, las variables de entorno ya están disponibles automáticamente
 // Solo cargamos dotenv si estamos en desarrollo local
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
+}
+
+// Función para guardar un suscriptor en Netlify Blobs
+async function saveSubscriber(name, email) {
+  try {
+    const store = getStore('subscribers');
+
+    // Obtener lista actual de suscriptores
+    let subscribers = [];
+    const existingData = await store.get('list', { type: 'json' });
+    if (existingData) {
+      subscribers = existingData;
+    }
+
+    // Verificar si el email ya existe
+    const emailExists = subscribers.some(sub => sub.email === email);
+    if (emailExists) {
+      console.log('📧 Email ya existe en la lista de suscriptores');
+      return { exists: true };
+    }
+
+    // Añadir nuevo suscriptor
+    subscribers.push({
+      name,
+      email,
+      subscribedAt: new Date().toISOString(),
+    });
+
+    // Guardar lista actualizada
+    await store.setJSON('list', subscribers);
+    console.log('✅ Suscriptor guardado en Netlify Blobs');
+    return { exists: false, saved: true };
+  } catch (error) {
+    console.error('❌ Error guardando suscriptor:', error);
+    // No lanzamos el error para que el email se envíe de todas formas
+    return { exists: false, saved: false, error: error.message };
+  }
 }
 
 async function sendWelcomeEmail(name, email) {
@@ -212,13 +250,29 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // NOTE: Database logic removed for Netlify Serverless compatibility (Filesystem is ephemeral).
-    // We are skipping the check if email exists and just sending the welcome email.
-    // For persistence, connect a cloud database (Supabase, MongoDB, etc.) here.
+    // Guardar suscriptor en Netlify Blobs (almacenamiento persistente)
+    const saveResult = await saveSubscriber(name, email);
 
+    if (saveResult.exists) {
+      console.log('⚠️ Email ya suscrito previamente');
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          message: "Este email ya está suscrito. ¡Gracias por tu interés!",
+          alreadySubscribed: true,
+        }),
+      };
+    }
+
+    // Enviar email de bienvenida
     await sendWelcomeEmail(name, email);
 
     console.log('✅ Suscripción completada exitosamente');
+    if (!saveResult.saved) {
+      console.warn('⚠️ Advertencia: Email enviado pero no se pudo guardar en la lista');
+    }
     return {
       statusCode: 200,
       headers,
