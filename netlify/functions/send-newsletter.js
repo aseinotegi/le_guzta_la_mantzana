@@ -66,7 +66,10 @@ exports.handler = async (event, context) => {
     }
 
     // Obtener lista de suscriptores
-    const store = getStore('subscribers');
+    const store = getStore({
+      name: 'subscribers',
+      context,
+    });
     const subscribers = await store.get('list', { type: 'json' }) || [];
 
     if (subscribers.length === 0) {

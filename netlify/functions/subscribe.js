@@ -8,9 +8,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 // Función para guardar un suscriptor en Netlify Blobs
-async function saveSubscriber(name, email) {
+async function saveSubscriber(name, email, context) {
   try {
-    const store = getStore('subscribers');
+    // Usar getStore con context para que funcione en Netlify
+    const store = getStore({
+      name: 'subscribers',
+      context,
+    });
 
     // Obtener lista actual de suscriptores
     let subscribers = [];
@@ -251,7 +255,7 @@ exports.handler = async (event, context) => {
     }
 
     // Guardar suscriptor en Netlify Blobs (almacenamiento persistente)
-    const saveResult = await saveSubscriber(name, email);
+    const saveResult = await saveSubscriber(name, email, context);
 
     if (saveResult.exists) {
       console.log('⚠️ Email ya suscrito previamente');
