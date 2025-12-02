@@ -173,11 +173,28 @@ exports.handler = async (event, context) => {
   console.log('🚀 Función subscribe iniciada');
   console.log('🌍 Entorno:', process.env.NODE_ENV || 'no definido');
 
+  // Headers comunes para todas las respuestas
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  };
+
+  // Manejar preflight request
+  if (event.httpMethod === "OPTIONS") {
+    return {
+      statusCode: 200,
+      headers,
+      body: '',
+    };
+  }
+
   // Only allow POST
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
@@ -190,7 +207,7 @@ exports.handler = async (event, context) => {
       console.warn('⚠️ Datos incompletos');
       return {
         statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ error: "Nombre y email son requeridos" }),
       };
     }
@@ -204,7 +221,7 @@ exports.handler = async (event, context) => {
     console.log('✅ Suscripción completada exitosamente');
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         success: true,
         message: "¡Suscripción exitosa! Revisa tu email de bienvenida.",
@@ -216,7 +233,7 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         error: "Error al procesar la suscripción",
         details: error.message,
