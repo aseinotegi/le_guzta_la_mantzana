@@ -37,8 +37,15 @@ export function SubscriptionModal({ open, onOpenChange }) {
     setIsSubmitting(true)
 
     try {
-      // Use relative path for Netlify Functions (redirects handle /api -> /.netlify/functions)
-      const apiUrl = import.meta.env.VITE_API_URL || ''
+      // Detectar automáticamente el entorno
+      // En producción (adiosmanuel.com), usar URL relativa
+      // En desarrollo local, usar VITE_API_URL si está definido
+      const isProduction = window.location.hostname === 'adiosmanuel.com'
+      const apiUrl = isProduction ? '' : (import.meta.env.VITE_API_URL || '')
+
+      console.log('🌍 Entorno detectado:', isProduction ? 'Producción' : 'Desarrollo')
+      console.log('📡 API URL:', apiUrl || 'URL relativa')
+
       const response = await fetch(`${apiUrl}/api/subscribe`, {
         method: 'POST',
         headers: {
