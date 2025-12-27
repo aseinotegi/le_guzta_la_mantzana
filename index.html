@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adios, Manuel :)</title>
+    <link rel="icon" href="img/cara_feliz.png" type="image/png">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <video class="video-background" autoplay muted loop playsinline>
+        <source src="img/Cierra_al_salir.mp4" type="video/mp4">
+    </video>
+
+    <div class="container">
+        <h1></h1>
+        <div id="countdown">
+            <div class="time-box">
+                <span id="days"></span>
+                <p>Días</p>
+            </div>
+            <div class="time-box">
+                <span id="hours"></span>
+                <p>Horas</p>
+            </div>
+            <div class="time-box">
+                <span id="minutes"></span>
+                <p>Minutos</p>
+            </div>
+            <div class="time-box">
+                <span id="seconds"></span>
+                <p>Segundos</p>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <img src="img/cara_feliz.png" class="progress-face start-face" alt="Cara Feliz">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+                <div class="progress-text">
+                    <span id="loading-text">SE VIENE...</span>
+                    <span id="progress-percentage">0%</span>
+                </div>
+                <img src="img/icons8-home-50.png" id="progress-icon" class="progress-icon" alt="Home Icon">
+            </div>
+            <img src="img/cara_triste.png" class="progress-face end-face" alt="Cara Triste">
+        </div>
+        
+        <p class="bixkor-text">A bixxxkor le gusta la mantzana</p>
+        
+    </div>
+
+    <div class="scroll-content">
+        </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
