@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const TEST_MODE_FIREWORKS = false; // Cambiar a true para probar los fuegos artificiales
 
     const phrases = [
-        "Abril",
+        "Marzo",
         "Próximamente",
         "Se viene",
         "Desocupando",
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ========== COUNTDOWN ==========
     const countdown = () => {
-        const countDate = new Date("April 1, 2026 00:00:00").getTime();
+        const countDate = new Date("March 15, 2026 00:00:00").getTime();
         const now = new Date().getTime();
         const gap = countDate - now;
 
